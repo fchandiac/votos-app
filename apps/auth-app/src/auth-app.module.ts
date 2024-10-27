@@ -30,7 +30,7 @@ const seed = envs.seed;
       database: envs.database.authDatabaseName,
       entities: [User, Session],
       synchronize: true,
-      dropSchema: seed,
+      dropSchema: true,
       
     }),
     AuthAppModule,

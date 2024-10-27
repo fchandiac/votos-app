@@ -21,7 +21,7 @@ const seed = envs.seed;
       database: envs.database.tablesDatabaseName, // Nombre de tu DB
       entities: [Place, Table], // Asegúrate de importar PlaceModule para poder usar PlaceService
       synchronize: true, // Solo para desarrollo. Desactiva en producción
-      dropSchema: seed, // Borra y crea las tablas en cada rein
+      dropSchema: true, // Borra y crea las tablas en cada rein
     }),
     PlaceModule,
     TableModule,

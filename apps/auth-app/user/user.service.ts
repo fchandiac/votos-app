@@ -4,33 +4,25 @@ import { QueryFailedError, Repository } from 'typeorm';
 import { User } from '../../libs/entities/auth/user.entity';
 import { Session } from '../../libs/entities/auth/session.entity';
 import { CreateUserDto } from 'apps/libs/dto/user/create-user.dto';
-import * as bcrypt from 'bcrypt';
 import { FindByEmailDto } from 'apps/libs/dto/user/find-by-email-dto';
 import { AppGateway } from '../gateway/app.gateway';
 import { ByIdDto } from 'apps/libs/dto/common/by-id.dto';
-
-
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     // private appGateway: AppGateway,
-
-
-
-
   ) {}
 
   // Crear un nuevo usuario
   async createUser(dto: CreateUserDto): Promise<User> {
     const { name, email, password, userName, phone, id } = dto; // Desestructuramos el DTO
-    // Encriptar la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10); // El número 10 es el número de rondas de sal
+    // Si decides no hashear la contraseña, simplemente asigna la contraseña
     const user = this.userRepository.create({
       name,
       email,
-      password: hashedPassword,
+      password, // Asignamos la contraseña sin hashear
       userName: userName,
       phone: phone,
       id: id,
@@ -40,7 +32,6 @@ export class UserService {
       return await this.userRepository.save(user);
     } catch (error) {
       if (error instanceof QueryFailedError) {
-
         if (error.driverError.code === 'ER_DUP_ENTRY') {
           // Código para entrada duplicada
           throw new ConflictException('El correo ya está en uso.'); // Lanza un conflicto
@@ -91,15 +82,11 @@ export class UserService {
     await this.userRepository.restore(userId);
   }
 
-  async findUserByMail(dto:FindByEmailDto): Promise<User | null> {
-
-    //this.appGateway.server.emit('message', 'Hola desde el servidor');
-
-
+  async findUserByMail(dto: FindByEmailDto): Promise<User | null> {
+    // this.appGateway.server.emit('message', 'Hola desde el servidor');
     const { email } = dto;
     // Buscar el usuario por su correo electrónico
     const user = await this.userRepository.findOne({ where: { email } });
-
     return user;
   }
 }
