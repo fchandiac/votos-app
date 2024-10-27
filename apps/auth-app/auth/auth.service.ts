@@ -1,6 +1,5 @@
 import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User } from '../../libs/entities/auth/user.entity'; // Ajusta la ruta según tu estructura
-import * as bcrypt from 'bcrypt'; // Importa bcrypt
 import { SignInDto } from '../../libs/dto/user/sign-in.dto'; // DTO para iniciar sesión
 import { CreateUserDto } from '../../libs/dto/user/create-user.dto'; // DTO para crear usuario
 import { ValidateUserDto } from 'apps/libs/dto/user/validate-user.dto';
@@ -18,7 +17,7 @@ export class AuthService {
   // Función para validar si el usuario existe
   async validateUser(dto: ValidateUserDto): Promise<User> {
     const { email } = dto;
-    const user = await this.userService.findUserByMail({email});
+    const user = await this.userService.findUserByMail({ email });
 
     if (!user) {
       throw new NotFoundException(`User with email ${email} not found`);
@@ -27,8 +26,6 @@ export class AuthService {
     return user;
   }
 
-
-
   // Método para iniciar sesión
   async signIn(dto: SignInDto, socketId: string): Promise<User> {
     const { email, password } = dto;
@@ -36,19 +33,16 @@ export class AuthService {
     // Usa la nueva función validateUser
     const user = await this.validateUser({ email });
 
-   
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
- 
-    // Verifica la contraseña
-    const isPasswordValid = await bcrypt.compare(password.toString(), user.password);
+    // Verifica la contraseña (debes implementar tu propia lógica para validarla sin bcrypt)
+    const isPasswordValid = this.checkPassword(password, user.password); // Implementa esta función
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-  
 
     // Crear una nueva sesión para el usuario
     // try {
@@ -77,12 +71,26 @@ export class AuthService {
     }
 
     // Hashea la contraseña antes de guardar el usuario
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const newUser = this.userService.createUser({
+    const hashedPassword = this.hashPassword(dto.password); // Implementa esta función
+    const newUser = await this.userService.createUser({
       ...dto,
       password: hashedPassword,
     });
 
     return newUser; // Guarda el nuevo usuario en la base de datos
+  }
+
+  // Implementa una función para validar contraseñas
+  private checkPassword(inputPassword: string, storedPassword: string): boolean {
+    // Aquí puedes implementar la lógica para verificar la contraseña
+    // por ejemplo, comparándola directamente si no estás usando hash
+    return inputPassword === storedPassword; // Ejemplo simplista
+  }
+
+  // Implementa una función para hashear contraseñas (puedes usar otra librería o método)
+  private hashPassword(password: string): string {
+    // Implementa la lógica para hashear la contraseña aquí
+    // Por ejemplo, podrías usar una función que simplemente retorne la contraseña
+    return password; // Esto es solo un ejemplo, no es seguro
   }
 }
