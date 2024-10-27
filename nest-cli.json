@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/votos-app/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/votos-app/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/votos-app",
+  "projects": {
+    "votos-app": {
+      "type": "application",
+      "root": "apps/votos-app",
+      "entryFile": "main",
+      "sourceRoot": "apps/votos-app/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/votos-app/tsconfig.app.json"
+      }
+    },
+    "tables-app": {
+      "type": "application",
+      "root": "apps/tables-app",
+      "entryFile": "main",
+      "sourceRoot": "apps/tables-app/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/tables-app/tsconfig.app.json"
+      }
+    },
+    "auth-app": {
+      "type": "application",
+      "root": "apps/auth-app",
+      "entryFile": "main",
+      "sourceRoot": "apps/auth-app/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/auth-app/tsconfig.app.json"
+      }
+    }
+  }
+}
