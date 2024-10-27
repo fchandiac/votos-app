@@ -10,8 +10,9 @@ import { UserService } from '../user/user.service';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: ['https://mesas.one', 'https://www.mesas.one'], // Orígenes permitidos
     methods: ['GET', 'POST'],
+    credentials: true, // Permitir el uso de credenciales
   },
 })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
